@@ -29,13 +29,18 @@ interface CityResponse{
     }[];
 }
 
+interface Uf {
+    uf: string; 
+    geonameId: number
+}
+
 
 
 const CreatePoint = () => {
 
     const [initialPosition, setinitialPosition] = useState<[number, number]>([0,0]);
     const [items, setItems] = useState<Item[]>([]);
-    const [selectedUf, setSeletedUf] = useState('0');
+    const [selectedUf, setSeletedUf] = useState('');
     const [selectedCity, setSeletedCity] = useState('0');
     const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0,0]);
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -66,10 +71,10 @@ const CreatePoint = () => {
 
     
     //Chamada para a API de estados
-    const [ufs, setUfs] = useState<{ uf: string; geonameId: number}[]>([]);
+    const [ufs, setUfs] = useState([] as Uf[]);
     useEffect(() => {
         axios.get<UFResponse>(
-            'http://www.geonames.org/childrenJSON?geonameId=3402362').then(response => {
+            'http://www.geonames.org/childrenJSON?geonameId=3469034').then(response => {
           const ufInitials = response.data.geonames.map((uf) =>{
               return { uf: uf.adminCodes1.ISO3166_2, geonameId: uf.geonameId };
           })
@@ -79,18 +84,21 @@ const CreatePoint = () => {
 
     const [est, setEst] = useState<{estado: string}[]>([]);
     useEffect(() => {
-        axios.get<CityResponse>('http://www.geonames.org/childrenJSON?geonameId=3402362').then(response => {
+        console.log(selectedUf)
+        if(selectedUf){
+        axios.get<CityResponse>(`http://www.geonames.org/childrenJSON?geonameId=${selectedUf}`).then(response => {
 
             const estInitials = response.data.geonames.map((est) => {
                 return { estado: est.name};
             });
 
             setEst(estInitials);
-          
+        
               
           })
+        }
 
-    }, [selectedCity]);
+    }, [selectedUf]);
     
    
     function handleSelectUf(event: ChangeEvent<HTMLSelectElement>){
@@ -137,9 +145,11 @@ const CreatePoint = () => {
     async function handleSubmit(event: FormEvent){
 
         event.preventDefault();
+        const selecUf=  ufs.find(uf => uf.geonameId === Number(selectedUf));
 
         const { name, email, whatsapp} = formData;
-        const uf = selectedUf;
+        // eslite 
+        const uf = selecUf?.uf;
         const city = selectedCity;
         const [latitude, longitude] = selectedPosition;
         const items = selectedItems;
@@ -167,12 +177,15 @@ const CreatePoint = () => {
     return(
         <div id="page-create-point">
             <header>
-                <img src={logo} alt="Ecoleta" />
-
-                <Link to="/">
-                    <FiArrowLeft/>
-                    Voltar para home
-                </Link>
+                
+                    <img src={logo} alt="Ecoleta" />
+                    
+                    <Link to="/">
+                        <FiArrowLeft/>
+                        Voltar para home
+                    </Link>
+                    
+                
             </header>
             <form onSubmit={handleSubmit}>
 
@@ -236,7 +249,7 @@ const CreatePoint = () => {
                         <select name="uf" id="uf" value={selectedUf} onChange={handleSelectUf}>
                             <option value="0">Selecione uma UF</option>
                             {ufs.map(uf => (
-                                <option key={uf.uf} value={uf.uf}>{uf.uf}</option>
+                                <option key={uf.uf} value={uf.geonameId}>{uf.uf}</option>
                             ))}
                         </select>
                     </div>
