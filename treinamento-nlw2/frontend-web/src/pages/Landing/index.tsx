@@ -5,7 +5,10 @@ import studyIcons from '../../assets/images/icons/study.svg'
 import giveClassesIcon from '../../assets/images/icons/give-classes.svg'
 import purpleHeartIcon from '../../assets/images/icons/purple-heart.svg'
 
-function Landing(){
+import './styles.css'
+import { Link } from 'react-router-dom';
+
+function Landing() {
 
   return (
 
@@ -16,19 +19,19 @@ function Landing(){
           <h2>Sua plataforma de estudos online.</h2>
         </div>
 
-        <img src={landingImg} alt="Plataforma de estudos" className="hero-image"/>
+        <img src={landingImg} alt="Plataforma de estudos" className="hero-image" />
 
         <div className="buttons-container">
 
-          <a href="#" className="">
-            <img src={studyIcons} alt="Estudar"/>
+          <Link to="/study" className="study">
+            <img src={studyIcons} alt="Estudar" />
             Estudar
-          </a>
+          </Link>
 
-          <a href="#" className="">
-            <img src={giveClassesIcon} alt="Estudar"/>
-            Estudar
-          </a>
+          <Link to="/give-classes" className="give-classes">
+            <img src={giveClassesIcon} alt="Dar Aulas" />
+            Dar Aulas
+          </Link>
         </div>
 
         <span className="total-connections">
