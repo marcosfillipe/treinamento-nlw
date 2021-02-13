@@ -5,15 +5,15 @@ export async function up(knex: Knex) {
     table.increments('id').primary();
 
     table.integer('user_id')
-    .notNullable()
-    .references('id')
-    .inTable('users')
-    .onUpdate('CASCADE')
-    .onDelete('CASCADE');
+      .notNullable()
+      .references('id')
+      .inTable('users')
+      .onUpdate('CASCADE')
+      .onDelete('CASCADE');
 
     table.timestamp('created_at')
-    .defaultTo('now()')
-    .notNullable();
+      .defaultTo(knex.raw('CURRENT_TIMESTAMP'))
+      .notNullable();
   });
 
 }
